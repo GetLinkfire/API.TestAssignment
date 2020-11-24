@@ -115,3 +115,8 @@ Software versions used:
  
   Visual Studio 2017;
   Microsoft SQL Server Management Studio v17.6;
+  
+## When you're done
+
+
+Submit your pull request once you are happy with your results and make sure not to share your solution on public repositories.
