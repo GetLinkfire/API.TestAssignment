@@ -7,8 +7,8 @@ namespace Service.Models.Link
 	{
 		public TrackingModel TrackingInfo { get; set; }
 
-		public Dictionary<string, List<Models.Link.Music.DestinationModel>> MusicDestinations { get; set; }
+		public Dictionary<string, List<DestinationModel>> MusicDestinations { get; set; }
 
-		public Dictionary<string, List<Models.Link.Ticket.DestinationModel>> TicketDestinations { get; set; }
+		public Dictionary<string, List<Ticket.DestinationModel>> TicketDestinations { get; set; }
 	}
 }

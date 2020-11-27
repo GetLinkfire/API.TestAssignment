@@ -1,18 +1,16 @@
+using System;
+using System.Data.Entity.Migrations;
+
 namespace Repository.Entities.Migrations
 {
-	using System;
-	using System.Data.Entity;
-	using System.Data.Entity.Migrations;
-	using System.Linq;
-
-	public sealed class Configuration : DbMigrationsConfiguration<Repository.Entities.Context>
+	public sealed class Configuration : DbMigrationsConfiguration<Context>
 	{
 		public Configuration()
 		{
 			AutomaticMigrationsEnabled = false;
 		}
 
-		protected override void Seed(Repository.Entities.Context context)
+		protected override void Seed(Context context)
 		{
 			context.Domains.AddOrUpdate(
 				new Domain() { Id = Guid.Parse("429bdd73-25a7-4b98-8e3a-6617fd66712b"), Name = "lnk.to" },
