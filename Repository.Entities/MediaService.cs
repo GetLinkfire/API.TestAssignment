@@ -1,13 +1,10 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Repository.Entities
 {
 	[Table("MediaServices")]
-	public class MediaService
+	public class MediaService : BaseEntity
 	{
-		public Guid Id { get; set; }
-
 		public string Name { get; set; }
 	}
 }

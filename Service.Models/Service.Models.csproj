@@ -43,13 +43,13 @@
     <Compile Include="ArtistModel.cs" />
     <Compile Include="Link\ExtendedLinkModel.cs" />
     <Compile Include="Link\LinkModel.cs" />
-    <Compile Include="Link\Music\DestinationModel.cs" />
+    <Compile Include="Link\Music\MusicDestinationModel.cs" />
     <Compile Include="StorageModel\Music\DestinationStorageModel.cs" />
     <Compile Include="StorageModel\Music\TrackingStorageModel.cs" />
     <Compile Include="StorageModel\Ticket\DestinationStorageModel.cs" />
     <Compile Include="StorageModel\Ticket\StorageModel.cs" />
     <Compile Include="Link\Music\TrackingModel.cs" />
-    <Compile Include="Link\Ticket\DestinationModel.cs" />
+    <Compile Include="Link\Ticket\TicketDestinationModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StorageModel\Music\StorageModel.cs" />
   </ItemGroup>

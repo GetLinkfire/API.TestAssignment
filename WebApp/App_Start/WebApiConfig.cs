@@ -11,7 +11,7 @@ using Repository.Entities;
 using Repository.Interfaces;
 using Service.Interfaces.Commands;
 using Service.Interfaces.Storage;
-using Service.Link;
+using Service.Links;
 using Service.Models.Link;
 using Service.Storage;
 using WebApp.Mappings;
@@ -36,11 +36,12 @@ namespace WebApp
 
 			builder.RegisterType<StorageService>().As<IStorage>().InstancePerLifetimeScope();
 
-			builder.RegisterType<CreateLinkCommand>().As<ICommand<LinkModel, CreateLinkArgument>>().SingleInstance();
+			builder.RegisterType<CreateLinkCommand>().As<ICommand<LinkModel, CreateLink>>().SingleInstance();
 			builder.RegisterType<UpdateLinkCommand>().As<ICommand<ExtendedLinkModel, UpdateLinkArgument>>().SingleInstance();
 			builder.RegisterType<GetLinkCommand>().As<ICommand<ExtendedLinkModel, GetLinkArgument>>().SingleInstance();
 			builder.RegisterType<DeleteLinkCommand>().As<ICommand<DeleteLinkArgument>>().SingleInstance();
 			
+
 			var container = builder.Build();
 			config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 			// Web API routes

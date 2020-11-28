@@ -9,7 +9,9 @@ namespace WebApp.Mappings
 			Mapper.Initialize(cfg =>
 			{
 				cfg.AddProfile(new ModelToResponseMappings());
+				cfg.AddProfile(new Service.Mappings.Mappings());
 			});
+
 		}
 	}
 }

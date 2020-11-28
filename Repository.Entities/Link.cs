@@ -7,9 +7,22 @@ using Repository.Entities.Enums;
 namespace Repository.Entities
 {
 	[Table("Links")]
-	public class Link
+	public class Link : BaseEntity
 	{
-		public Guid Id { get; set; }
+		public Link() { }
+
+		public Link(string title, MediaType mediaType, string code, Domain domain, string url, ICollection<Artist> artists) : this()
+		{
+			Id = Guid.NewGuid();
+			Title = title;
+			MediaType = mediaType;
+			Code = code;
+			Url = url;
+			Artists = artists;
+			IsActive = true;
+			Domain = domain;
+			DomainId = domain.Id;
+		}
 
 		[Index("IX_Links_Title_Code_IsActive", 1)]
 		[StringLength(255)]

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Service.Interfaces.Storage;
 
-namespace Service.Link
+namespace Service.Links
 {
 	public class LinkHelper
 	{

@@ -6,19 +6,18 @@ using System.Data.Entity;
 
 namespace Repository
 {
-	public class LinkRepository : ILinkRepository
+	public class LinkRepository : Repository<Link>, ILinkRepository
 	{
-		private readonly Context _context;
-
-		public LinkRepository(Context context)
-		{
-			_context = context;
-		}
-
+		public LinkRepository(Context dbContext) : base(dbContext) { }
 
 		public Link GetLink(Guid linkId)
 		{
-			var link = _context.Links.Include(x=>x.Domain).FirstOrDefault(x => x.Id == linkId && x.IsActive);
+			var link = _dbContext.Links
+				.Include(x => x.Domain)
+				.FirstOrDefault(x =>
+					x.Id == linkId &&
+					x.IsActive);
+
 			if (link == null)
 			{
 				throw new Exception($"Link {linkId} not found.");
@@ -29,12 +28,15 @@ namespace Repository
 
 		public Link CreateLink(Link link)
 		{
-			_context.Domains.Attach(link.Domain);
+
+			_dbContext.Domains.Attach(link.Domain);
 
 			if (link.Artists?.Any() == true)
 			{
 				var linkArtistIds = link.Artists.Select(x => x.Id).ToList();
-				var artists = _context.Artists.Where(x => linkArtistIds.Contains(x.Id)).ToDictionary(x => x.Id, x => x);
+				var artists = _dbContext.Artists
+					.Where(x => linkArtistIds.Contains(x.Id))
+					.ToDictionary(x => x.Id, x => x);
 
 				foreach (var artist in link.Artists)
 				{
@@ -46,20 +48,20 @@ namespace Repository
 			}
 
 			link.IsActive = true;
-			_context.Links.Add(link);
-			_context.SaveChanges();
+			_dbContext.Links.Add(link);
+			_dbContext.SaveChanges();
 			return link;
 		}
 
 		public Link UpdateLink(Link link)
 		{
-			var entry = _context.Entry(link);
+			var entry = _dbContext.Entry(link);
 
 			// make sure that next fields will be never modified on update
 			entry.Property(x => x.MediaType).IsModified = false;
 			entry.Property(x => x.IsActive).IsModified = false;
 
-			_context.Domains.Attach(link.Domain);
+			_dbContext.Domains.Attach(link.Domain);
 
 			// TODO: implement DB link update
 			throw new NotImplementedException();
@@ -67,13 +69,13 @@ namespace Repository
 
 		public Link DeleteLink(Guid linkId)
 		{
-			var link = _context.Links.Include(x => x.Domain).FirstOrDefault(x => x.Id == linkId);
+			var link = _dbContext.Links.Include(x => x.Domain).FirstOrDefault(x => x.Id == linkId);
 			if (link == null)
 			{
 				throw new Exception($"Link {linkId} not found.");
 			}
 			link.IsActive = false;
-			_context.SaveChanges();
+			_dbContext.SaveChanges();
 			return link;
 		}
 	}

@@ -2,7 +2,7 @@
 
 namespace Service.Models.Link.Ticket
 {
-	public class DestinationModel
+	public class TicketDestinationModel
 	{
 		/// <summary>
 		/// unique identifier for ticket destination

@@ -7,7 +7,7 @@ using Service.Interfaces.Storage;
 using Service.Models;
 using Service.Models.Link;
 
-namespace Service.Link
+namespace Service.Links
 {
 	public class GetLinkCommand : ICommand<ExtendedLinkModel, GetLinkArgument>
 	{
@@ -67,7 +67,7 @@ namespace Service.Link
 
 					result.MusicDestinations =
 						musicStorage.Destinations?.ToDictionary(x => x.Key,
-							x => x.Value.Select(d => new Models.Link.Music.DestinationModel()
+							x => x.Value.Select(d => new Models.Link.Music.MusicDestinationModel()
 							{
 								MediaServiceId = d.MediaServiceId,
 								TrackingInfo = d.TrackingInfo != null
@@ -89,7 +89,7 @@ namespace Service.Link
 
 					result.TicketDestinations =
 						ticketStorage.Destinations?.ToDictionary(x => x.Key,
-							x => x.Value.Select(d => new Models.Link.Ticket.DestinationModel()
+							x => x.Value.Select(d => new Models.Link.Ticket.TicketDestinationModel()
 							{
 								MediaServiceId = d.MediaServiceId,
 								Url = d.Url,

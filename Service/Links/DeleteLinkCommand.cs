@@ -1,7 +1,7 @@
 ﻿using System;
 using Service.Interfaces.Commands;
 
-namespace Service.Link
+namespace Service.Links
 {
 	public class DeleteLinkCommand: ICommand<DeleteLinkArgument>
 	{

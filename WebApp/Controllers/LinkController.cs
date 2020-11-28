@@ -7,7 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using AutoMapper;
 using Service.Interfaces.Commands;
-using Service.Link;
+using Service.Links;
 using Service.Models.Link;
 using WebApp.Models;
 
@@ -16,13 +16,13 @@ namespace WebApp.Controllers
 	[RoutePrefix("links")]
 	public class LinkController : ApiController
 	{
-		private readonly ICommand<LinkModel, CreateLinkArgument> _createCommand;
+		private readonly ICommand<LinkModel, CreateLink> _createCommand;
 		private readonly ICommand<ExtendedLinkModel, UpdateLinkArgument> _updateCommand;
 		private readonly ICommand<ExtendedLinkModel, GetLinkArgument> _getCommand;
 		private readonly ICommand<DeleteLinkArgument> _deleteCommand;
 
 		public LinkController(
-			ICommand<LinkModel, CreateLinkArgument> createCommand,
+			ICommand<LinkModel, CreateLink> createCommand,
 			ICommand<ExtendedLinkModel, UpdateLinkArgument> updateCommand,
 			ICommand<ExtendedLinkModel, GetLinkArgument> getCommand,
 			ICommand<DeleteLinkArgument> deleteCommand)
@@ -43,7 +43,7 @@ namespace WebApp.Controllers
 			mapped.MusicDestinations = result.MusicDestinations?.SelectMany(x =>
 				x.Value.Select(d =>
 				{
-					var dest = Mapper.Map<Service.Models.Link.Music.DestinationModel, MusicDestinationDto>(d);
+					var dest = Mapper.Map<Service.Models.Link.Music.MusicDestinationModel, MusicDestinationDto>(d);
 					dest.IsoCode = x.Key;
 					return dest;
 				}).ToList()
@@ -51,7 +51,7 @@ namespace WebApp.Controllers
 			mapped.TicketDestinations = result.TicketDestinations?.SelectMany(x =>
 				x.Value.Select(d =>
 				{
-					var dest = Mapper.Map<Service.Models.Link.Ticket.DestinationModel, TicketDestinationDto>(d);
+					var dest = Mapper.Map<Service.Models.Link.Ticket.TicketDestinationModel, TicketDestinationDto>(d);
 					dest.IsoCode = x.Key;
 					return dest;
 				}).ToList()
@@ -64,12 +64,9 @@ namespace WebApp.Controllers
 		[ResponseType(typeof(LinkDto))]
 		public HttpResponseMessage Create([FromBody] CreateLinkDto link)
 		{
-			var result = _createCommand.Execute(new CreateLinkArgument()
-			{
-				Link = Mapper.Map<LinkModel>(link),
-				MusicDestinations = link.MusicDestinations?.GroupBy(x => x.IsoCode.ToUpper()).ToDictionary(x => x.Key, x => x.Select(Mapper.Map<Service.Models.Link.Music.DestinationModel>).ToList()),
-				TicketDestinations = link.TicketDestinations?.GroupBy(x => x.IsoCode.ToUpper()).ToDictionary(x => x.Key, x => x.Select(Mapper.Map<Service.Models.Link.Ticket.DestinationModel>).ToList())
-			});
+			var createLink = Mapper.Map<CreateLink>(link);
+			var result = _createCommand.Execute(createLink);
+
 			var mapped = Mapper.Map<LinkDto>(result);
 			return Request.CreateResponse(HttpStatusCode.OK, mapped);
 		}
@@ -85,14 +82,14 @@ namespace WebApp.Controllers
 				Link = Mapper.Map<ExtendedLinkModel>(link)
 			};
 			argument.Link.MusicDestinations = link.MusicDestinations?.GroupBy(x => x.IsoCode.ToUpper()).ToDictionary(x => x.Key,
-				x => x.Select(Mapper.Map<Service.Models.Link.Music.DestinationModel>).ToList());
+				x => x.Select(Mapper.Map<Service.Models.Link.Music.MusicDestinationModel>).ToList());
 			argument.Link.TicketDestinations = link.TicketDestinations?.GroupBy(x => x.IsoCode.ToUpper())
-				.ToDictionary(x => x.Key, x => x.Select(Mapper.Map<Service.Models.Link.Ticket.DestinationModel>).ToList());
+				.ToDictionary(x => x.Key, x => x.Select(Mapper.Map<Service.Models.Link.Ticket.TicketDestinationModel>).ToList());
 			var result = _updateCommand.Execute(argument); var mapped = Mapper.Map<LinkDto>(result);
 			mapped.MusicDestinations = result.MusicDestinations?.SelectMany(x =>
 				x.Value.Select(d =>
 				{
-					var dest = Mapper.Map<Service.Models.Link.Music.DestinationModel, MusicDestinationDto>(d);
+					var dest = Mapper.Map<Service.Models.Link.Music.MusicDestinationModel, MusicDestinationDto>(d);
 					dest.IsoCode = x.Key;
 					return dest;
 				}).ToList()
@@ -100,7 +97,7 @@ namespace WebApp.Controllers
 			mapped.TicketDestinations = result.TicketDestinations?.SelectMany(x =>
 				x.Value.Select(d =>
 				{
-					var dest = Mapper.Map<Service.Models.Link.Ticket.DestinationModel, TicketDestinationDto>(d);
+					var dest = Mapper.Map<Service.Models.Link.Ticket.TicketDestinationModel, TicketDestinationDto>(d);
 					dest.IsoCode = x.Key;
 					return dest;
 				}).ToList()

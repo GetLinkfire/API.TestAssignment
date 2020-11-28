@@ -9,7 +9,7 @@ using Repository.Entities.Enums;
 using Repository.Interfaces;
 using Rhino.Mocks;
 using Service.Interfaces.Storage;
-using Service.Link;
+using Service.Links;
 using Service.Models.Link;
 using Service.Models.Link.Music;
 using Service.Models.StorageModel.Music;
@@ -97,11 +97,11 @@ namespace Service.Tests.Link
 					.With(x => x.MediaType, existDbLink.MediaType)
 					.With(x => x.TicketDestinations, null)
 					.With(x => x.TrackingInfo, null)
-					.With(x => x.MusicDestinations, new Dictionary<string, List<DestinationModel>>()
+					.With(x => x.MusicDestinations, new Dictionary<string, List<MusicDestinationModel>>()
 					{
 						{
 							"all",
-							Builder<DestinationModel>.CreateListOfSize(3)
+							Builder<MusicDestinationModel>.CreateListOfSize(3)
 								.All()
 								.Do(x=>x.TrackingInfo = Builder<TrackingModel>.CreateNew().Build())
 								.TheFirst(1)
@@ -207,11 +207,11 @@ namespace Service.Tests.Link
 					.With(x => x.MediaType, existDbLink.MediaType)
 					.With(x => x.TicketDestinations, null)
 					.With(x => x.TrackingInfo, Builder<TrackingModel>.CreateNew().Build())
-					.With(x => x.MusicDestinations, new Dictionary<string, List<DestinationModel>>()
+					.With(x => x.MusicDestinations, new Dictionary<string, List<MusicDestinationModel>>()
 					{
 						{
 							"all",
-							Builder<DestinationModel>.CreateListOfSize(3)
+							Builder<MusicDestinationModel>.CreateListOfSize(3)
 								.All()
 								.Do(x=>x.TrackingInfo = Builder<TrackingModel>.CreateNew().Build())
 								.TheFirst(1)
@@ -316,11 +316,11 @@ namespace Service.Tests.Link
 					.With(x => x.Code, newCode)
 					.With(x => x.DomainId, existDbLink.DomainId)
 					.With(x => x.MediaType, existDbLink.MediaType)
-					.With(x => x.TicketDestinations, new Dictionary<string, List<Models.Link.Ticket.DestinationModel>>()
+					.With(x => x.TicketDestinations, new Dictionary<string, List<Models.Link.Ticket.TicketDestinationModel>>()
 					{
 						{
 							"all",
-							Builder<Models.Link.Ticket.DestinationModel>.CreateListOfSize(destinationInAllCount)
+							Builder<Models.Link.Ticket.TicketDestinationModel>.CreateListOfSize(destinationInAllCount)
 								.All()
 								.Do(x=>x.ShowId = Guid.NewGuid())
 								.TheFirst(1)
@@ -329,7 +329,7 @@ namespace Service.Tests.Link
 						},
 						{
 							"dk",
-							Builder<Models.Link.Ticket.DestinationModel>.CreateListOfSize(destinationInDKCount)
+							Builder<Models.Link.Ticket.TicketDestinationModel>.CreateListOfSize(destinationInDKCount)
 								.All()
 								.Do(x=>x.ShowId = Guid.NewGuid())
 								.Build().ToList()

@@ -2,7 +2,7 @@
 
 namespace Repository.Entities
 {
-	public class Context:DbContext
+	public class Context : DbContext
 	{
 		public DbSet<Link> Links { get; set; }
 		public DbSet<Domain> Domains { get; set; }

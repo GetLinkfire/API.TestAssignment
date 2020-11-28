@@ -11,7 +11,7 @@ using Service.Models.Link;
 using Service.Models.StorageModel.Music;
 
 
-namespace Service.Link
+namespace Service.Links
 {
 	public class UpdateLinkCommand : ICommand<ExtendedLinkModel, UpdateLinkArgument>
 	{
@@ -94,7 +94,7 @@ namespace Service.Link
 						argument.Link.MusicDestinations.SelectMany(x => x.Value.Select(d => d.MediaServiceId)).Distinct().ToList();
 					var mediaServices = _mediaServiceRepository.GetMediaServices().Where(x => uniqMediaServiceIds.Contains(x.Id)).ToList();
 
-					var musicStorage = _storageService.Get<Models.StorageModel.Music.StorageModel>(generalLinkPathToRead);
+					var musicStorage = _storageService.Get<StorageModel>(generalLinkPathToRead);
 
 					musicStorage.Title = argument.Link.Title;
 					musicStorage.Url = argument.Link.Url;
@@ -113,7 +113,7 @@ namespace Service.Link
 					musicStorage.Destinations = argument.Link.MusicDestinations?.ToDictionary(
 						md => md.Key,
 						md => md.Value.Where(d => mediaServices.Select(m => m.Id).Contains(d.MediaServiceId)).Select(d =>
-							new Models.StorageModel.Music.DestinationStorageModel()
+							new DestinationStorageModel()
 							{
 								MediaServiceId = d.MediaServiceId,
 								TrackingInfo = new TrackingStorageModel()
@@ -145,7 +145,7 @@ namespace Service.Link
 
 					result.MusicDestinations =
 						musicStorage.Destinations?.ToDictionary(x => x.Key,
-							x => x.Value.Select(d => new Models.Link.Music.DestinationModel()
+							x => x.Value.Select(d => new Models.Link.Music.MusicDestinationModel()
 							{
 								MediaServiceId = d.MediaServiceId,
 								TrackingInfo = d.TrackingInfo != null
@@ -223,7 +223,7 @@ namespace Service.Link
 
 					result.TicketDestinations =
 						ticketStorage.Destinations?.ToDictionary(x => x.Key,
-							x => x.Value.Select(d => new Models.Link.Ticket.DestinationModel()
+							x => x.Value.Select(d => new Models.Link.Ticket.TicketDestinationModel()
 							{
 								MediaServiceId = d.MediaServiceId,
 								Url = d.Url,

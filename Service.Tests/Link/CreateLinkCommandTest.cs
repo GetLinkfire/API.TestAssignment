@@ -9,7 +9,7 @@ using Repository.Entities.Enums;
 using Repository.Interfaces;
 using Rhino.Mocks;
 using Service.Interfaces.Storage;
-using Service.Link;
+using Service.Links;
 using Service.Models;
 using Service.Models.Link;
 using Service.Models.Link.Music;
@@ -61,18 +61,18 @@ namespace Service.Tests.Link
 				.Build();
 			var mediaServices = Builder<MediaService>.CreateListOfSize(1).Build().ToList();
 
-			var argument = Builder<CreateLinkArgument>.CreateNew()
+			var argument = Builder<CreateLink>.CreateNew()
 				.With(x => x.Link, Builder<LinkModel>.CreateNew()
 					.With(x => x.Code, null)
 					.With(x => x.DomainId, domainId)
 					.With(x => x.MediaType, MediaType.Music)
 					.Build())
 				.With(x => x.TicketDestinations, null)
-				.With(x => x.MusicDestinations, new Dictionary<string, List<DestinationModel>>()
+				.With(x => x.MusicDestinations, new Dictionary<string, List<MusicDestinationModel>>()
 				{
 					{
 						"all",
-						Builder<DestinationModel>.CreateListOfSize(3)
+						Builder<MusicDestinationModel>.CreateListOfSize(3)
 							.TheFirst(1)
 							.With(x => x.MediaServiceId, mediaServices.First().Id)
 							.Build().ToList()
@@ -121,18 +121,18 @@ namespace Service.Tests.Link
 
 			var artists = Builder<ArtistModel>.CreateListOfSize(2).Build().ToList();
 
-			var argument = Builder<CreateLinkArgument>.CreateNew()
+			var argument = Builder<CreateLink>.CreateNew()
 				.With(x => x.Link, Builder<LinkModel>.CreateNew()
 					.With(x => x.Code, null)
 					.With(x => x.DomainId, domainId)
 					.With(x => x.MediaType, MediaType.Ticket)
 					.With(x => x.Artists, artists)
 					.Build())
-				.With(x => x.TicketDestinations, new Dictionary<string, List<Models.Link.Ticket.DestinationModel>>()
+				.With(x => x.TicketDestinations, new Dictionary<string, List<Models.Link.Ticket.TicketDestinationModel>>()
 				{
 					{
 						"all",
-						Builder<Models.Link.Ticket.DestinationModel>.CreateListOfSize(3).Build().ToList()
+						Builder<Models.Link.Ticket.TicketDestinationModel>.CreateListOfSize(3).Build().ToList()
 					}
 				})
 				.With(x => x.MusicDestinations, null)
@@ -177,7 +177,7 @@ namespace Service.Tests.Link
 				.With(x => x.Id, domainId)
 				.Build();
 			
-			var argument = Builder<CreateLinkArgument>.CreateNew()
+			var argument = Builder<CreateLink>.CreateNew()
 				.With(x => x.Link, Builder<LinkModel>.CreateNew()
 					.With(x => x.MediaType, MediaType.Music)
 					.With(x => x.Code, "codere")

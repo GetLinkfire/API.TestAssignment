@@ -1,12 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace Repository.Entities
 {
-	public class Artist
+	public class Artist : BaseEntity
 	{
-		public Guid Id { get; set; }
+		public Artist() { }
+
+		public Artist(string name, string label, ICollection<Link> links = null) 
+		{
+			Id = Guid.NewGuid();
+			Name = name;
+			Label = label;
+			Links = links;
+		}
+
 		[StringLength(255)]
 		public string Name { get; set; }
 		
