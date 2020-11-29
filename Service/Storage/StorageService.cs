@@ -15,17 +15,23 @@ namespace Service.Storage
 		{
 			get
 			{
-				var basePath = AppDomain.CurrentDomain.BaseDirectory;
+				string basePath = AppDomain.CurrentDomain.BaseDirectory;
+				
 				if (basePath.Contains("bin"))
+                {
 					return Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+				}
+				
 				return Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.FullName;
 			}
 		}
 
 		public T Get<T>(string filePath)
 		{
-			var absolutePath = Path.Combine(SolutionFolder, _tempFolder, filePath);
-			var content = File.ReadAllText(absolutePath);
+			string absolutePath = AbsolutePath(filePath);
+			
+			string content = File.ReadAllText(absolutePath);
+			
 			if (string.IsNullOrEmpty(content))
 			{
 				throw new Exception($"File {absolutePath} not found.");
@@ -36,45 +42,67 @@ namespace Service.Storage
 
 		public void Save<T>(string filePath, T content)
 		{
-			var text = JsonConvert.SerializeObject(content);
-			var absolutePath = Path.Combine(SolutionFolder, _tempFolder, filePath);
+			string text = JsonConvert.SerializeObject(content);
+			
+			string absolutePath = AbsolutePath(filePath);
+			
 			Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
+			
 			File.WriteAllText(absolutePath, text);
 		}
 
 		public List<string> GetFileList(string directoryPath, string startedWith = null)
 		{
-			var absolutePath = Path.Combine(SolutionFolder, _tempFolder, directoryPath);
+			string absolutePath = AbsolutePath(directoryPath);
 
 			if (!Directory.Exists(absolutePath))
 			{
 				return Enumerable.Empty<string>().ToList();
 			}
 
-			FileAttributes attr = File.GetAttributes(absolutePath);
+			ValidateDirectory(directoryPath);
 
-			if (!attr.HasFlag(FileAttributes.Directory))
-			{
-				throw new ArgumentException($"Path {directoryPath} should point to directory");
-			}
-
-			string[] filePaths = Directory.GetFileSystemEntries(absolutePath,
-				String.IsNullOrEmpty(startedWith) ? $"*.json" : $"{startedWith}*", SearchOption.AllDirectories);
+			string[] filePaths = Directory.GetFileSystemEntries(
+				absolutePath,
+				string.IsNullOrEmpty(startedWith) ? $"*.json" : $"{startedWith}*",
+				SearchOption.AllDirectories
+			);
 
 			return filePaths.ToList();
 		}
 
 		public void Delete(string directoryPath)
 		{
-			var absolutePath = Path.Combine(SolutionFolder, _tempFolder, directoryPath);
+			string absolutePath = ValidateDirectory(directoryPath);
+
+			Directory.Delete(absolutePath, true);
+		}
+
+		public void Move(string originPath, string destinationPath)
+		{
+			string absoluteOriginPath = Path.Combine(SolutionFolder, _tempFolder, originPath);
+			string absoluteDestinationPath = Path.Combine(SolutionFolder, _tempFolder, destinationPath);
+
+			Directory.Move(absoluteOriginPath, absoluteDestinationPath);
+		}
+
+		private	string AbsolutePath(string path)
+        {
+			return Path.Combine(SolutionFolder, _tempFolder, path);
+		}
+
+		private string ValidateDirectory(string path)
+        {
+			string absolutePath = AbsolutePath(path);
+
 			FileAttributes attr = File.GetAttributes(absolutePath);
 
 			if (!attr.HasFlag(FileAttributes.Directory))
 			{
-				throw new ArgumentException($"Path {directoryPath} should point to directory");
+				throw new ArgumentException($"Path {path} should point to directory");
 			}
-			
-			Directory.Delete(absolutePath, true);
+
+			return absolutePath;
 		}
 	}
 }

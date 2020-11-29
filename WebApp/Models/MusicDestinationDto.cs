@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Models
 {
-	public class MusicDestinationDto
+    public class MusicDestinationDto
 	{
 		[Required]
 		public Guid MediaServiceId { get; set; }
@@ -20,7 +20,9 @@ namespace WebApp.Models
 		public string Mobile { get; set; }
 		
 		public string Artist { get; set; }
+		
 		public string Album { get; set; }
+		
 		public string SongTitle { get; set; }
 	}
 }

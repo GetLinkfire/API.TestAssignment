@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Link\BaseCommand.cs" />
     <Compile Include="Link\CreateLinkCommand.cs" />
     <Compile Include="Link\DeleteLinkCommand.cs" />
     <Compile Include="Link\GetLinkCommand.cs" />

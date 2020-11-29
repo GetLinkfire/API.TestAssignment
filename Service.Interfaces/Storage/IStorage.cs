@@ -2,7 +2,7 @@
 
 namespace Service.Interfaces.Storage
 {
-	public interface IStorage
+    public interface IStorage
 	{
 		T Get<T>(string filePath);
 
@@ -11,5 +11,7 @@ namespace Service.Interfaces.Storage
 		List<string> GetFileList(string directoryPath, string startedWith = null);
 
 		void Delete(string directoryPath);
+
+		void Move(string origin, string Destination);
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity.Core;
 using Repository.Entities;
 using Repository.Interfaces;
 
@@ -15,10 +16,11 @@ namespace Repository
 
 		public Domain GetDomain(Guid id)
 		{
-			var domain = _context.Domains.Find(id);
+			Domain domain = _context.Domains.Find(id);
+			
 			if (domain == null)
 			{
-				throw new Exception($"Domain {id} not found.");
+				throw new ObjectNotFoundException($"Domain {id} not found.");
 			}
 
 			return domain;

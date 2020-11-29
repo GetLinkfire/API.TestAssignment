@@ -9,6 +9,7 @@ namespace Service.Link
 	public class LinkHelper
 	{
 		public static Func<string, string, string> ShortLinkTemplate = (domain, code) => $"{domain}/{code}";
+		public static Func<string, Guid, string> DeletedLinkTemplate = (domain, linkId) => $"{domain}/{linkId}";
 		public static Func<string, string> LinkGeneralFilenameTemplate = (shortLink) => $"{shortLink}/general.json";
 
 		/// <summary>
@@ -41,7 +42,10 @@ namespace Service.Link
 				string existingCode = key.Split(Path.DirectorySeparatorChar).Last();
 				
 				// check code from key against short and shorter code
-				if (existingCode.Equals(code, StringComparison.InvariantCultureIgnoreCase) || existingCode.Equals(shorterCode, StringComparison.InvariantCultureIgnoreCase))
+				if (
+					existingCode.Equals(code, StringComparison.InvariantCultureIgnoreCase) ||
+					existingCode.Equals(shorterCode, StringComparison.InvariantCultureIgnoreCase)
+				)
 				{
 					return false;
 				}

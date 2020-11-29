@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Service.Models.Link;
+using System;
 using WebApp.Models;
 
 namespace WebApp.Mappings
 {
-	public class ModelToResponseMappings : Profile
+    public class ModelToResponseMappings : Profile
 	{
 		public ModelToResponseMappings()
 		{
