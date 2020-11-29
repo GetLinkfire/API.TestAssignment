@@ -30,7 +30,6 @@ namespace Service.Storage
 			{
 				throw new Exception($"File {absolutePath} not found.");
 			}
-
 			return JsonConvert.DeserializeObject<T>(content);
 		}
 
@@ -44,19 +43,14 @@ namespace Service.Storage
 
 		public List<string> GetFileList(string directoryPath, string startedWith = null)
 		{
-			var absolutePath = Path.Combine(SolutionFolder, _tempFolder, directoryPath);
+			var absolutePath = GetAbsolutePath(directoryPath);
 
 			if (!Directory.Exists(absolutePath))
 			{
 				return Enumerable.Empty<string>().ToList();
 			}
 
-			FileAttributes attr = File.GetAttributes(absolutePath);
-
-			if (!attr.HasFlag(FileAttributes.Directory))
-			{
-				throw new ArgumentException($"Path {directoryPath} should point to directory");
-			}
+			ValidateDirectory(absolutePath);
 
 			string[] filePaths = Directory.GetFileSystemEntries(absolutePath,
 				String.IsNullOrEmpty(startedWith) ? $"*.json" : $"{startedWith}*", SearchOption.AllDirectories);
@@ -66,15 +60,32 @@ namespace Service.Storage
 
 		public void Delete(string directoryPath)
 		{
-			var absolutePath = Path.Combine(SolutionFolder, _tempFolder, directoryPath);
+			var absolutePath = GetAbsolutePath(directoryPath);
+			ValidateDirectory(absolutePath);
+			
+			Directory.Delete(absolutePath, true);
+		}
+
+		public void RenameDirectory(string directoryPath, string newName)
+		{
+			var absolutePath = GetAbsolutePath(directoryPath);
+			var newAbsolutePath = GetAbsolutePath(newName);
+			Directory.Move(absolutePath, newAbsolutePath);
+		}
+
+		private void ValidateDirectory(string absolutePath)
+		{
 			FileAttributes attr = File.GetAttributes(absolutePath);
 
 			if (!attr.HasFlag(FileAttributes.Directory))
 			{
-				throw new ArgumentException($"Path {directoryPath} should point to directory");
+				throw new ArgumentException($"Path {absolutePath} should point to directory");
 			}
-			
-			Directory.Delete(absolutePath, true);
+		}
+
+		private string GetAbsolutePath(string relativePath)
+		{
+			return Path.Combine(SolutionFolder, _tempFolder, relativePath);
 		}
 	}
 }

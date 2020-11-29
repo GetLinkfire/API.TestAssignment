@@ -14,6 +14,7 @@ namespace Repository
 		{
 			var link = _dbContext.Links
 				.Include(x => x.Domain)
+				.Include(l => l.Artists)
 				.FirstOrDefault(x =>
 					x.Id == linkId &&
 					x.IsActive);
@@ -47,7 +48,6 @@ namespace Repository
 				link.Artists = artists.Select(x => x.Value).ToList();
 			}
 
-			link.IsActive = true;
 			_dbContext.Links.Add(link);
 			_dbContext.SaveChanges();
 			return link;
@@ -60,22 +60,34 @@ namespace Repository
 			// make sure that next fields will be never modified on update
 			entry.Property(x => x.MediaType).IsModified = false;
 			entry.Property(x => x.IsActive).IsModified = false;
+			entry.State = EntityState.Modified;
 
 			_dbContext.Domains.Attach(link.Domain);
+			_dbContext.SaveChanges();
 
-			// TODO: implement DB link update
-			throw new NotImplementedException();
+			return link;
 		}
 
 		public Link DeleteLink(Guid linkId)
 		{
-			var link = _dbContext.Links.Include(x => x.Domain).FirstOrDefault(x => x.Id == linkId);
+			var link = _dbContext.Links
+				.Include(x => x.Domain)
+				.FirstOrDefault(x => x.Id == linkId);
+
 			if (link == null)
 			{
 				throw new Exception($"Link {linkId} not found.");
 			}
-			link.IsActive = false;
+
+			if (!link.IsActive) 
+			{
+				throw new Exception($"Link {linkId} is inactive");
+			}
+
+			link.SetInactive();
+
 			_dbContext.SaveChanges();
+
 			return link;
 		}
 	}

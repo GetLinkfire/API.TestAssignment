@@ -34,11 +34,11 @@ namespace Repository.Entities
 		public string Code { get; set; }
 
 		[Index("IX_Links_Title_Code_IsActive", 3)]
-		public bool IsActive { get; set; }
+		public bool IsActive { get; private set; }
 
 		public string Url { get; set; }
 
-		public MediaType MediaType { get; set; }
+		public MediaType MediaType { get; private set; }
 
 		public Guid DomainId { get; set; }
 
@@ -46,5 +46,13 @@ namespace Repository.Entities
 		public virtual Domain Domain { get; set; }
 
 		public virtual ICollection<Artist> Artists { get; set; }
+
+		/// <summary>
+		/// Sets the link as not active
+		/// </summary>
+		public void SetInactive()
+		{
+			IsActive = false;
+		}
 	}
 }

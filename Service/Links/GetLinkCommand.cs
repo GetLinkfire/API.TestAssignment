@@ -9,7 +9,7 @@ using Service.Models.Link;
 
 namespace Service.Links
 {
-	public class GetLinkCommand : ICommand<ExtendedLinkModel, GetLinkArgument>
+	public class GetLinkCommand : ICommand<ExtendedLinkModel, GetLink>
 	{
 		private readonly ILinkRepository _linkRepository;
 		private readonly IStorage _storageService;
@@ -22,9 +22,9 @@ namespace Service.Links
 			_linkRepository = linkRepository;
 		}
 
-		public ExtendedLinkModel Execute(GetLinkArgument argument)
+		public ExtendedLinkModel Execute(GetLink request)
 		{
-			var dbLink = _linkRepository.GetLink(argument.LinkId);
+			var dbLink = _linkRepository.GetLink(request.LinkId);
 
 			var shortLink = LinkHelper.ShortLinkTemplate(dbLink.Domain.Name, dbLink.Code);
 			string generalLinkPath = LinkHelper.LinkGeneralFilenameTemplate(shortLink);
@@ -108,7 +108,7 @@ namespace Service.Links
 		}
 	}
 
-	public class GetLinkArgument
+	public class GetLink
 	{
 		public Guid LinkId { get; set; }
 	}

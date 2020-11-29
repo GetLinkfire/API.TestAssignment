@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using AutoMapper;
 using FizzWare.NBuilder;
 using NUnit.Framework;
 using Repository.Entities;
@@ -10,6 +12,7 @@ using Repository.Interfaces;
 using Rhino.Mocks;
 using Service.Interfaces.Storage;
 using Service.Links;
+using Service.Mappings;
 using Service.Models;
 using Service.Models.Link;
 using Service.Models.Link.Music;
@@ -36,11 +39,11 @@ namespace Service.Tests.Link
 			_linkRepository = MockRepository.GenerateMock<ILinkRepository>();
 			_domainRepository = MockRepository.GenerateMock<IDomainRepository>();
 			_mediaServiceRepository = MockRepository.GenerateMock<IMediaServiceRepository>();
-
 			_storageService = MockRepository.GenerateMock<IStorage>();
-
 			_createLinkCommand = new CreateLinkCommand(_storageService, _domainRepository, _mediaServiceRepository, _linkRepository);
 
+			Mapper.Initialize(m => m.AddProfile<Mappings.Mappings>());
+			Mapper.AssertConfigurationIsValid();
 		}
 
 		[TearDown]
@@ -50,6 +53,7 @@ namespace Service.Tests.Link
 			_linkRepository.VerifyAllExpectations();
 			_domainRepository.VerifyAllExpectations();
 			_mediaServiceRepository.VerifyAllExpectations();
+			Mapper.Reset();
 		}
 
 		[Test]
@@ -188,7 +192,7 @@ namespace Service.Tests.Link
 			_domainRepository.Expect(x => x.GetDomain(Arg<Guid>.Is.Equal(argument.Link.DomainId))).Return(domain);
 
 			_storageService.Expect(x => x.GetFileList(Arg<string>.Is.Equal($"{domain.Name}"), Arg<string>.Is.Equal("code")))
-				.Return(new List<string>() { $"{domain.Name}/code" });
+				.Return(new List<string>() { $"{domain.Name}{Path.DirectorySeparatorChar}code" });
 
 			Assert.Throws<ArgumentException>(() => { _createLinkCommand.Execute(argument); });
 		}

@@ -117,7 +117,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Mappings\AutoMapperConfiguration.cs" />
+    <Compile Include="Mappings\MappingExtensions.cs" />
     <Compile Include="Mappings\ModelToResponseMappings.cs" />
+    <Compile Include="Models\DestinationDto.cs" />
     <Compile Include="Models\LinkDto.cs" />
     <Compile Include="Models\MusicDestinationDto.cs" />
     <Compile Include="Models\TicketDestinationDto.cs" />

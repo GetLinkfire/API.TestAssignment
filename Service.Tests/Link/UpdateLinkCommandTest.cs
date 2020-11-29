@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using FizzWare.NBuilder;
 using NUnit.Framework;
@@ -21,7 +22,6 @@ namespace Service.Tests.Link
 	public class UpdateLinkCommandTest
 	{
 		private IStorage _storageService;
-
 		private ILinkRepository _linkRepository;
 		private IDomainRepository _domainRepository;
 		private IMediaServiceRepository _mediaServiceRepository;
@@ -90,7 +90,7 @@ namespace Service.Tests.Link
 				})
 				.Build();
 
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.With(x => x.Code, existDbLink.Code)
 					.With(x => x.DomainId, existDbLink.DomainId)
@@ -148,7 +148,7 @@ namespace Service.Tests.Link
 			Assert.AreEqual(argument.Link.MediaType, result.MediaType);
 			Assert.AreEqual(argument.Link.Title, result.Title);
 			Assert.AreEqual(argument.Link.Url, result.Url);
-			Assert.IsNull(result.Artists);
+			Assert.IsEmpty(result.Artists);
 			Assert.IsNull(result.TicketDestinations);
 			Assert.IsNull(result.TrackingInfo);
 			// Failed as mapping is missing
@@ -200,7 +200,7 @@ namespace Service.Tests.Link
 				})
 				.Build();
 
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.With(x => x.Code, newCode)
 					.With(x => x.DomainId, existDbLink.DomainId)
@@ -260,7 +260,7 @@ namespace Service.Tests.Link
 			Assert.AreEqual(argument.Link.MediaType, result.MediaType);
 			Assert.AreEqual(argument.Link.Title, result.Title);
 			Assert.AreEqual(argument.Link.Url, result.Url);
-			Assert.IsNull(result.Artists);
+			Assert.IsEmpty(result.Artists);
 			Assert.IsNull(result.TicketDestinations);
 
 			Assert.AreEqual(argument.Link.TrackingInfo.Web, result.TrackingInfo.Web);
@@ -311,7 +311,7 @@ namespace Service.Tests.Link
 
 			int destinationInAllCount = 3;
 			int destinationInDKCount = 1;
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.With(x => x.Code, newCode)
 					.With(x => x.DomainId, existDbLink.DomainId)
@@ -376,7 +376,7 @@ namespace Service.Tests.Link
 			Assert.AreEqual(argument.Link.MediaType, result.MediaType);
 			Assert.AreEqual(argument.Link.Title, result.Title);
 			Assert.AreEqual(argument.Link.Url, result.Url);
-			Assert.IsNull(result.Artists);
+			Assert.IsEmpty(result.Artists);
 			Assert.IsNull(result.MusicDestinations);
 		
 			Assert.AreEqual(destinationInAllCount, result.TicketDestinations["all"].Count);
@@ -387,7 +387,7 @@ namespace Service.Tests.Link
 		[Test]
 		public void Execute_LinkNotFound()
 		{
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.Build())
 				.Build();
@@ -409,7 +409,7 @@ namespace Service.Tests.Link
 				.With(x => x.MediaType, MediaType.Music)
 				.Build();
 
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.With(x => x.MediaType, MediaType.Ticket)
 					.Build())
@@ -431,7 +431,7 @@ namespace Service.Tests.Link
 				.With(x => x.MediaType, MediaType.Music)
 				.Build();
 
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.With(x => x.MediaType, MediaType.Music)
 					.Build())
@@ -465,7 +465,7 @@ namespace Service.Tests.Link
 				.With(x => x.Domain, domain)
 				.Build();
 
-			var argument = Builder<UpdateLinkArgument>.CreateNew()
+			var argument = Builder<UpdateLink>.CreateNew()
 				.With(x => x.Link, Builder<ExtendedLinkModel>.CreateNew()
 					.With(x => x.MediaType, MediaType.Music)
 					.With(x => x.Code, "codeup")
@@ -473,11 +473,12 @@ namespace Service.Tests.Link
 					.Build())
 				.Build();
 
+
 			_linkRepository.Expect(x => x.GetLink(Arg<Guid>.Is.Equal(argument.Link.Id))).Return(existDbLink);
 			_domainRepository.Expect(x => x.GetDomain(Arg<Guid>.Is.Equal(argument.Link.DomainId))).Return(domain);
 
 			_storageService.Expect(x => x.GetFileList(Arg<string>.Is.Equal($"{domain.Name}"), Arg<string>.Is.Equal("code")))
-				.Return(new List<string>() { $"{domain.Name}/code" });
+				.Return(new List<string>() { $"{domain.Name}{Path.DirectorySeparatorChar}code" });
 
 			Assert.Throws<ArgumentException>(() => { _updateLinkCommand.Execute(argument); });
 		}

@@ -30,9 +30,9 @@ namespace Service.Links
 			return code;
 		}
 
-		public static bool IsValidLinkCode(IStorage storageService, string domainName, string code)
+		public static bool IsValidLinkCode(IStorage storageService, string domainName, string newCode)
 		{
-			string shorterCode = code.Substring(0, code.Length - 2);
+			string shorterCode = newCode.Substring(0, newCode.Length - 2);
 
 			List<string> keysInPath = storageService.GetFileList(domainName, shorterCode);
 
@@ -41,13 +41,19 @@ namespace Service.Links
 				string existingCode = key.Split(Path.DirectorySeparatorChar).Last();
 				
 				// check code from key against short and shorter code
-				if (existingCode.Equals(code, StringComparison.InvariantCultureIgnoreCase) || existingCode.Equals(shorterCode, StringComparison.InvariantCultureIgnoreCase))
+				if (existingCode.Equals(newCode, StringComparison.InvariantCultureIgnoreCase) || existingCode.Equals(shorterCode, StringComparison.InvariantCultureIgnoreCase))
 				{
 					return false;
 				}
 
 				// check shorter code from key against the requested short code
-				if (existingCode.Substring(0, existingCode.Length - 2).Equals(code, StringComparison.InvariantCultureIgnoreCase))
+				if (existingCode.Substring(0, existingCode.Length - 2).Equals(newCode, StringComparison.InvariantCultureIgnoreCase))
+				{
+					return false;
+				}
+
+				// check if new code starts has the format oldCode{+2 symbols}
+				if (existingCode.StartsWith(newCode) && newCode.Length == existingCode.Length + 2)
 				{
 					return false;
 				}

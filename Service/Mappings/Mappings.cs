@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Service.Models.Link;
 using Repository.Entities;
+using Service.Models.Link;
 
 namespace Service.Mappings
 {
@@ -8,7 +8,8 @@ namespace Service.Mappings
 	{
 		public Mappings()
 		{
-			//CreateMap<Link, LinkModel>();
+			AllowNullCollections = true;
+			CreateMap<Link, LinkModel>();
 		}
 	}
 }

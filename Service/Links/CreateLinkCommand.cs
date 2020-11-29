@@ -50,7 +50,7 @@ namespace Service.Links
 				code = LinkHelper.GetUniqueLinkShortCode(_storageService, domain.Name);
 			}
 
-			Link dbLink;
+			var dbLink = CreateDbLink(request, domain, code);
 
 			switch (request.Link.MediaType)
 			{
@@ -71,16 +71,13 @@ namespace Service.Links
 					var shortLink = LinkHelper.ShortLinkTemplate(domain.Name, code);
 					string generalLinkPath = LinkHelper.LinkGeneralFilenameTemplate(shortLink);
 
-					dbLink = CreateDbLink(request, domain, code);
-
-					SaveMusicLinkToStorage(request, mediaServices, generalLinkPath);
+					SaveMusicLinkToStorage(dbLink, request, mediaServices, generalLinkPath);
 
 					break;
 				case MediaType.Ticket:
 					var shortLinkTicket = LinkHelper.ShortLinkTemplate(domain.Name, code);
 					string generalLinkPathTicket = LinkHelper.LinkGeneralFilenameTemplate(shortLinkTicket);
 
-					dbLink = CreateDbLink(request, domain, code);
 					SaveTicketLinkToStorage(request, generalLinkPathTicket);
 					break;
 				default:
@@ -112,31 +109,39 @@ namespace Service.Links
 			});
 		}
 
-		private void SaveMusicLinkToStorage(CreateLink request, List<MediaService> mediaServices, string generalLinkPath)
+		private void SaveMusicLinkToStorage(Link link, CreateLink request, List<MediaService> mediaServices, string generalLinkPath)
 		{
 			_storageService.Save(generalLinkPath, new StorageModel()
 			{
-				Id = request.Link.Id,
-				MediaType = request.Link.MediaType,
-				Url = request.Link.Url,
-				Title = request.Link.Title,
-				Destinations = request.MusicDestinations.ToDictionary(
-					md => md.Key,
-					md => md.Value.Where(d => mediaServices.Select(m => m.Id).Contains(d.MediaServiceId)).Select(d => new DestinationStorageModel()
-					{
-						MediaServiceId = d.MediaServiceId,
-						TrackingInfo = new TrackingStorageModel()
-						{
-							MediaServiceName = mediaServices.First(m => m.Id == d.MediaServiceId).Name,
+				Id = link.Id,
+				MediaType = link.MediaType,
+				Url = link.Url,
+				Title = link.Title,
+				Destinations = request.MusicDestinations
+					.ToDictionary(
+						md => md.Key,
+						md => md.Value.Where(destinationModel => 
+							mediaServices
+								.Select(m => m.Id)
+								.Contains(destinationModel.MediaServiceId))
+								.Select(d => new DestinationStorageModel
+								{
+									MediaServiceId = d.MediaServiceId,
+									TrackingInfo = new TrackingStorageModel()
+									{
+										MediaServiceName = mediaServices.First(m => m.Id == d.MediaServiceId).Name,
 
-							Artist = d.TrackingInfo?.Artist,
-							Album = d.TrackingInfo?.Album,
-							SongTitle = d.TrackingInfo?.SongTitle,
+										Artist = d.TrackingInfo?.Artist,
+										Album = d.TrackingInfo?.Album,
+										SongTitle = d.TrackingInfo?.SongTitle,
 
-							Mobile = d.TrackingInfo?.Mobile,
-							Web = d.TrackingInfo?.Web,
-						}
-					}).ToList())
+										Mobile = d.TrackingInfo?.Mobile,
+										Web = d.TrackingInfo?.Web,
+									}
+								})
+								.ToList())
+					.Where(pair => pair.Value.Any()) // prevent the final result to have empty Iso codes 
+					.ToDictionary(x => x.Key, x => x.Value)
 			});
 		}
 

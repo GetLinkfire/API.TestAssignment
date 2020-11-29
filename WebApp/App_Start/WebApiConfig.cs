@@ -37,9 +37,9 @@ namespace WebApp
 			builder.RegisterType<StorageService>().As<IStorage>().InstancePerLifetimeScope();
 
 			builder.RegisterType<CreateLinkCommand>().As<ICommand<LinkModel, CreateLink>>().SingleInstance();
-			builder.RegisterType<UpdateLinkCommand>().As<ICommand<ExtendedLinkModel, UpdateLinkArgument>>().SingleInstance();
-			builder.RegisterType<GetLinkCommand>().As<ICommand<ExtendedLinkModel, GetLinkArgument>>().SingleInstance();
-			builder.RegisterType<DeleteLinkCommand>().As<ICommand<DeleteLinkArgument>>().SingleInstance();
+			builder.RegisterType<UpdateLinkCommand>().As<ICommand<ExtendedLinkModel, UpdateLink>>().SingleInstance();
+			builder.RegisterType<GetLinkCommand>().As<ICommand<ExtendedLinkModel, GetLink>>().SingleInstance();
+			builder.RegisterType<DeleteLinkCommand>().As<ICommand<DeleteLink>>().SingleInstance();
 			
 
 			var container = builder.Build();

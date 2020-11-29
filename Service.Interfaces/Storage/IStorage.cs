@@ -11,5 +11,7 @@ namespace Service.Interfaces.Storage
 		List<string> GetFileList(string directoryPath, string startedWith = null);
 
 		void Delete(string directoryPath);
+
+		void RenameDirectory(string directoryPath, string newName);
 	}
 }

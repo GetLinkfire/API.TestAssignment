@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Linq;
 
 namespace Repository.Entities
 {
@@ -8,12 +9,11 @@ namespace Repository.Entities
 	{
 		public Artist() { }
 
-		public Artist(string name, string label, ICollection<Link> links = null) 
+		public Artist(string name, string label) 
 		{
 			Id = Guid.NewGuid();
 			Name = name;
 			Label = label;
-			Links = links;
 		}
 
 		[StringLength(255)]
@@ -23,5 +23,5 @@ namespace Repository.Entities
 		public string Label { get; set; }
 		
 		public virtual ICollection<Link> Links { get; set; }
-	}
+    }
 }
